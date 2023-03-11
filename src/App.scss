@@ -74,6 +74,7 @@
     .year-time-type {
       display: grid;
       grid-template-columns: 4fr 1fr 4fr 1fr 4fr;
+      grid-template-rows: 56px 20px;
     }
     .director-resolution {
       display: grid;

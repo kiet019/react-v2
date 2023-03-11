@@ -1,9 +1,10 @@
-import { Button, MenuItem, Select, TextField } from "@mui/material";
+import { Button, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 
 export default function AddForm() {
+  const [isDisabled, setIsDisabled] = useState();
   const baseURL = `https://64055d32eed195a99f80eece.mockapi.io/api/films/films`;
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -26,6 +27,21 @@ export default function AddForm() {
       information: "",
       type: 0,
     },
+    validationSchema: Yup.object({
+      title: Yup.string()
+        .required("Required")
+        .min(1, "Must contain at least 1 character"),
+      Year: Yup.number()
+        .min(1000, "YYYY")
+        .max(3000)
+        .required("Required form YYYY"),
+      time: Yup.string().required("Required"),
+      director: Yup.string().required("Required"),
+      trailer: Yup.string().required("Required"),
+      information: Yup.string()
+        .required("Required")
+        .min(5, "Must be 10 character"),
+    }),
     onSubmit: (values) => {
       fetch(baseURL, {
         method: "POST",
@@ -43,10 +59,28 @@ export default function AddForm() {
         })
         .then((data) => {})
         .catch((error) => console.log(error.message));
-    // alert(JSON.stringify(values))
+      // alert(JSON.stringify(values))
     },
-    validationSchema: Yup.object({}),
   });
+  useEffect(() => {
+    if (
+      Object.values(formik.touched).every((touched) => touched === true) &&
+      Object.keys(formik.errors).length === 0 &&
+      formik.values.type !== 0 &&
+      formik.values.image !== "" &&
+      formik.values.resolution !== ""
+    ) {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [
+    formik.touched,
+    formik.errors,
+    formik.values.type,
+    formik.values.image,
+    formik.values.resolution,
+  ]);
   return (
     <div className="add-form">
       <form onSubmit={formik.handleSubmit}>
@@ -60,7 +94,9 @@ export default function AddForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />
-        <div></div>
+        <Typography variant="caption" color="red">
+          {formik.touched.title && <>{formik.errors.title}</>}
+        </Typography>
         <div className="year-time-type">
           <TextField
             id="outlined-basic"
@@ -95,6 +131,13 @@ export default function AddForm() {
             <MenuItem value={1}>Movies</MenuItem>
             <MenuItem value={2}>Series</MenuItem>
           </Select>
+          <Typography variant="caption" color="red">
+            {formik.touched.Year && <>{formik.errors.Year}</>}
+          </Typography>
+          <div></div>
+          <Typography variant="caption" color="red">
+            {formik.touched.time && <>{formik.errors.time}</>}
+          </Typography>
         </div>
         <div></div>
         <div className="director-resolution">
@@ -124,7 +167,9 @@ export default function AddForm() {
             <MenuItem value="2560x1440">2560 x 1440 </MenuItem>
           </Select>
         </div>
-        <div></div>
+        <Typography variant="caption" color="red">
+          {formik.touched.director && <>{formik.errors.director}</>}
+        </Typography>
         <TextField
           name="trailer"
           label="Trailer"
@@ -135,7 +180,9 @@ export default function AddForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />
-        <div></div>
+        <Typography variant="caption" color="red">
+          {formik.touched.trailer && <>{formik.errors.trailer}</>}
+        </Typography>
         <TextField
           multiline
           rows={5}
@@ -148,7 +195,9 @@ export default function AddForm() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />
-        <div></div>
+        <Typography variant="caption" color="red">
+          {formik.touched.information && <>{formik.errors.information}</>}
+        </Typography>
         <div>
           <input
             type="file"
@@ -167,6 +216,7 @@ export default function AddForm() {
           variant="contained"
           size="small"
           type="submit"
+          disabled={isDisabled}
           style={{ marginTop: "20px" }}
         >
           Add
