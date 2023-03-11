@@ -2,11 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Fab } from "@mui/material";
 import { Link } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function ShowFilm() {
   const [APIData, setAPIData] = useState([]);
   const baseURL = `https://64055d32eed195a99f80eece.mockapi.io/api/films/films`;
+  function deleteFilm(id) {
+    fetch(baseURL + "/" + id, {
+      method: "DELETE",
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+    });
+    // handle error
+  }
   useEffect(() => {
     fetch(baseURL)
       .then((response) => {
@@ -40,11 +50,24 @@ export default function ShowFilm() {
             </div>
           </div>
           <div className="button">
-            <Fab aria-label="delete" style={{ backgroundColor: "green" }}>
-              <Link to="/update"><EditIcon /></Link>
+            <Fab aria-label="update" style={{ backgroundColor: "green" }}>
+              <Link to="/update">
+                <EditIcon />
+              </Link>
             </Fab>
-            <Fab aria-label="edit" style={{ backgroundColor: "#CE0301" }}>
-              <Link to="/delete"><DeleteIcon /></Link>
+            <Fab
+              aria-label="delete"
+              style={{ backgroundColor: "#CE0301" }}
+              onClick={() => {
+                if (window.confirm("You sure to want to delete this contact")) {
+                  deleteFilm(film.id)
+                  alert("Delete success");
+                } else {
+                  alert("Delete fail");
+                }
+              }}
+            >
+              <DeleteIcon />
             </Fab>
           </div>
         </div>

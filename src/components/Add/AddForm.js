@@ -1,9 +1,19 @@
-import { MenuItem, Select, TextField } from "@mui/material";
+import { Button, MenuItem, Select, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import React from "react";
 import * as Yup from "yup";
 
 export default function AddForm() {
+  const baseURL = `https://64055d32eed195a99f80eece.mockapi.io/api/films/films`;
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const imageSrc = `assets/images/${file.name}`;
+      formik.setFieldValue("image", imageSrc);
+    };
+    reader.readAsDataURL(file);
+  };
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -16,7 +26,25 @@ export default function AddForm() {
       information: "",
       type: 0,
     },
-    onSubmit: (values) => {},
+    onSubmit: (values) => {
+      fetch(baseURL, {
+        method: "POST",
+        body: JSON.stringify(values),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "same-origin",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {})
+        .catch((error) => console.log(error.message));
+    // alert(JSON.stringify(values))
+    },
     validationSchema: Yup.object({}),
   });
   return (
@@ -39,7 +67,6 @@ export default function AddForm() {
             label="Year"
             variant="outlined"
             name="Year"
-            value={formik.values.Year}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
@@ -97,6 +124,53 @@ export default function AddForm() {
             <MenuItem value="2560x1440">2560 x 1440 </MenuItem>
           </Select>
         </div>
+        <div></div>
+        <TextField
+          name="trailer"
+          label="Trailer"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={formik.values.trailer}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+        <div></div>
+        <TextField
+          multiline
+          rows={5}
+          name="information"
+          label="Information"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={formik.values.information}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+        <div></div>
+        <div>
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            id="image-upload"
+            onChange={handleImageUpload}
+          />
+          <label htmlFor="image-upload">
+            <Button variant="contained" component="span">
+              Upload Image
+            </Button>
+          </label>
+        </div>
+        <Button
+          variant="contained"
+          size="small"
+          type="submit"
+          style={{ marginTop: "20px" }}
+        >
+          Add
+        </Button>
       </form>
     </div>
   );

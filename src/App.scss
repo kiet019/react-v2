@@ -3,7 +3,7 @@
 }
 .main-container {
   height: fit-content;
-  padding: 68.5px 15%;
+  padding: 100px 15%;
   background-color: rgb(241, 241, 241);
   .showfilm {
     display: grid;
@@ -53,6 +53,9 @@
         margin-right: 10px;
         width: 50px;
         height: 50px;
+        display: block;
+        color: white;
+        text-decoration: none;
       }
     }
   }
@@ -66,7 +69,7 @@
       border-radius: 15px;
       background-color: white;
       display: grid;
-      grid-template-rows: repeat(2, 56px 20px);
+      grid-template-rows: repeat(4, 56px 20px);
     }
     .year-time-type {
       display: grid;
