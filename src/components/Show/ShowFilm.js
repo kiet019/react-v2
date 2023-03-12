@@ -6,7 +6,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function ShowFilm() {
   const [APIData, setAPIData] = useState([]);
-  const baseURLs = ["https://64055d32eed195a99f80eece.mockapi.io/api/films/details/1/film-details", "https://64055d32eed195a99f80eece.mockapi.io/api/films/details/2/film-details"]
+  const baseURLs = [
+    "https://64055d32eed195a99f80eece.mockapi.io/api/films/details/1/film-details",
+    "https://64055d32eed195a99f80eece.mockapi.io/api/films/details/2/film-details",
+  ];
   function deleteFilm(baseURL, id) {
     fetch(baseURL + "/" + id, {
       method: "DELETE",
@@ -21,20 +24,20 @@ export default function ShowFilm() {
     let tempData = [];
     baseURLs.forEach((baseURL) => {
       fetch(baseURL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        tempData = [...tempData, ...data];
-        if (tempData.length !== 0) {
-          setAPIData(tempData);
-        }
-      })
-      .catch((error) => console.log(error.message));
-    })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          tempData = [...data, ...tempData];
+          if (tempData.length !== 0) {
+            setAPIData(tempData);
+          }
+        })
+        .catch((error) => console.log(error.message));
+    });
     // eslint-disable-next-line
   }, []);
   return (
@@ -56,7 +59,22 @@ export default function ShowFilm() {
             </div>
           </div>
           <div className="button">
-            <Fab aria-label="update" style={{ backgroundColor: "green" }}>
+            <Fab
+              aria-label="update"
+              style={{ backgroundColor: "green" }}
+              onClick={() => {
+                localStorage.setItem("id", film.id)
+                localStorage.setItem("type", film.type)
+                localStorage.setItem("image", film.image)
+                localStorage.setItem("title", film.title)
+                localStorage.setItem("Year", film.Year)
+                localStorage.setItem("director", film.director)
+                localStorage.setItem("time", film.time)
+                localStorage.setItem("trailer", film.trailer)
+                localStorage.setItem("resolution", film.resolution)
+                localStorage.setItem("information", film.information)
+              }}
+            >
               <Link to="/update">
                 <EditIcon />
               </Link>
@@ -66,7 +84,7 @@ export default function ShowFilm() {
               style={{ backgroundColor: "#CE0301" }}
               onClick={() => {
                 if (window.confirm("You sure to want to delete this films")) {
-                  deleteFilm(baseURLs[film.type-1], film.id)
+                  deleteFilm(baseURLs[film.type - 1], film.id);
                   alert("Delete success");
                 } else {
                   alert("Delete fail");

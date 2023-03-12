@@ -1,10 +1,15 @@
-import { Button, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Alert, AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import * as Yup from "yup";
 
 export default function AddForm() {
   const [isDisabled, setIsDisabled] = useState();
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -42,7 +47,10 @@ export default function AddForm() {
         .min(5, "Must be 10 character"),
     }),
     onSubmit: (values) => {
-      const baseURL = `https://64055d32eed195a99f80eece.mockapi.io/api/films/details/`+ formik.values.type +`/film-details`;
+      const baseURL =
+        `https://64055d32eed195a99f80eece.mockapi.io/api/films/details/` +
+        formik.values.type +
+        `/film-details`;
       fetch(baseURL, {
         method: "POST",
         body: JSON.stringify(values),
@@ -57,7 +65,7 @@ export default function AddForm() {
           }
           return response.json();
         })
-        .then((data) => {})
+        .then((data) => setOpen(true))
         .catch((error) => console.log(error.message));
       // alert(JSON.stringify(values))
     },
@@ -222,6 +230,31 @@ export default function AddForm() {
           Add
         </Button>
       </form>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Congraturation"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Alert severity="success">
+              <AlertTitle>Adding successful!</AlertTitle>
+            </Alert>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button>
+            <Link to="/" style={{ textDecoration: "none", color: "#1976d2"}}>
+              Home
+            </Link>
+          </Button>
+          <Button autoFocus onClick={handleClose} style={{ textDecoration: "none", color: "red"}}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
