@@ -5,7 +5,6 @@ import * as Yup from "yup";
 
 export default function AddForm() {
   const [isDisabled, setIsDisabled] = useState();
-  const baseURL = `https://64055d32eed195a99f80eece.mockapi.io/api/films/films`;
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -43,6 +42,7 @@ export default function AddForm() {
         .min(5, "Must be 10 character"),
     }),
     onSubmit: (values) => {
+      const baseURL = `https://64055d32eed195a99f80eece.mockapi.io/api/films/details/`+ formik.values.type +`/film-details`;
       fetch(baseURL, {
         method: "POST",
         body: JSON.stringify(values),
@@ -128,8 +128,8 @@ export default function AddForm() {
             <MenuItem value={0}>
               <em>Select type</em>
             </MenuItem>
-            <MenuItem value={1}>Movies</MenuItem>
-            <MenuItem value={2}>Series</MenuItem>
+            <MenuItem value={1}>Series</MenuItem>
+            <MenuItem value={2}>Movies</MenuItem>
           </Select>
           <Typography variant="caption" color="red">
             {formik.touched.Year && <>{formik.errors.Year}</>}
